@@ -1,0 +1,133 @@
+##########################################################################
+# Title:         Cloudbox: Olaris | Default Variables                    #
+# Author(s):     l3uddz                                                  #
+# URL:           https://github.com/cloudbox/cloudbox                    #
+# --                                                                     #
+#         Part of the Cloudbox project: https://cloudbox.works           #
+##########################################################################
+#                   GNU General Public License v3.0                      #
+##########################################################################
+---
+################################
+# Basics
+################################
+
+olaris_name: olaris
+
+################################
+# Paths
+################################
+
+olaris_paths_folder: "{{ olaris_name }}"
+olaris_paths_location: "{{ server_appdata_path }}/{{ olaris_paths_folder }}"
+olaris_rclone_config_location: "/home/{{ user.name }}/.config/rclone"
+
+olaris_paths_folders_list:
+  - "{{ olaris_paths_location }}"
+  - "{{ olaris_rclone_config_location }}"
+
+################################
+# Web
+################################
+
+olaris_web_subdomain: "{{ olaris_name }}"
+olaris_web_domain: "{{ user.domain }}"
+olaris_web_port: "8080"
+olaris_web_url: "{{ 'https://' + olaris_web_subdomain + '.' + olaris_web_domain
+                      if (reverse_proxy_is_enabled)
+                      else 'http://localhost:' + olaris_web_port }}"
+
+################################
+# Docker
+################################
+
+# Container
+olaris_docker_container: "{{ olaris_name }}"
+
+# Image
+olaris_docker_image_pull: yes
+olaris_docker_image_tag: "latest"
+olaris_docker_image: "olaristv/olaris-server:{{ olaris_docker_image_tag }}"
+
+# Ports
+olaris_docker_ports_defaults:
+  - "6931:{{ olaris_web_port }}"
+olaris_docker_ports_custom: []
+olaris_docker_ports: "{{ olaris_docker_ports_defaults
+                                + olaris_docker_ports_custom
+                            if (not reverse_proxy_is_enabled)
+                            else [] + olaris_docker_ports_custom }}"
+
+# Envs
+olaris_docker_envs_default:
+  OLARIS_UID: "{{ uid }}"
+  OLARIS_GID: "{{ gid }}"
+  TZ: "{{ tz }}"
+
+olaris_docker_envs_custom: {}
+
+olaris_docker_envs: "{{ olaris_docker_envs_default
+                              | combine(olaris_docker_envs_custom)
+                              | combine(docker_envs_reverse_proxy_common)
+                          if (reverse_proxy_is_enabled)
+                          else olaris_docker_envs_default
+                              | combine(olaris_docker_envs_custom) }}"
+
+# Volumes
+olaris_docker_volumes_default:
+  - "{{ olaris_paths_location }}:/home/olaris/.config/olaris"
+  - "{{ olaris_rclone_config_location }}:/home/olaris/.config/rclone"
+  - "/mnt:/mnt"
+olaris_docker_volumes_custom: []
+olaris_docker_volumes: "{{ olaris_docker_volumes_default
+                                  + olaris_docker_volumes_custom
+                                  + docker_volumes_downloads_common }}"
+
+# Devices
+olaris_docker_devices_default: []
+olaris_docker_devices_custom: []
+olaris_docker_devices: "{{ olaris_docker_devices_default
+                                  + olaris_docker_devices_custom }}"
+
+# Hosts
+olaris_docker_hosts_default: []
+olaris_docker_hosts_custom: []
+olaris_docker_hosts: "{{ docker_hosts_common
+                                | combine(olaris_docker_hosts_default)
+                                | combine(olaris_docker_hosts_custom) }}"
+
+# Labels
+olaris_docker_labels_default: {}
+olaris_docker_labels_custom: {}
+olaris_docker_labels: "{{ docker_labels_common
+                                | combine(olaris_docker_labels_default)
+                                | combine(olaris_docker_labels_custom) }}"
+
+# Hostname
+olaris_docker_hostname: "{{ olaris_name }}"
+
+# Networks
+olaris_docker_networks_alias: "{{ olaris_name }}"
+olaris_docker_networks_default: []
+olaris_docker_networks_custom: []
+olaris_docker_networks: "{{ docker_networks_common
+                                  + olaris_docker_networks_default
+                                  + olaris_docker_networks_custom }}"
+
+# Capabilities
+olaris_docker_capabilities_default: []
+olaris_docker_capabilities_custom: []
+olaris_docker_capabilities: "{{ olaris_docker_capabilities_default
+                                      + olaris_docker_capabilities_custom }}"
+
+# Security Opts
+olaris_docker_security_opts_default: []
+olaris_docker_security_opts_custom: []
+olaris_docker_security_opts: "{{ olaris_docker_security_opts_default
+                                        + olaris_docker_security_opts_custom }}"
+
+# Restart Policy
+olaris_docker_restart_policy: unless-stopped
+
+# State
+olaris_docker_state: started
