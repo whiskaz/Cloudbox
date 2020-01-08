@@ -51,7 +51,7 @@ olaris_docker_image: "olaristv/olaris-server:{{ olaris_docker_image_tag }}"
 
 # Ports
 olaris_docker_ports_defaults:
-  - "6931:{{ olaris_web_port }}"
+  - "{{ olaris_web_port }}"
 olaris_docker_ports_custom: []
 olaris_docker_ports: "{{ olaris_docker_ports_defaults
                                 + olaris_docker_ports_custom
