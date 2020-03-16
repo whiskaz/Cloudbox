@@ -1,0 +1,137 @@
+##########################################################################
+# Title:         Cloudbox: Soulseek  | Default Variables                 #
+# Author(s):     l3uddz                                                  #
+# URL:           https://github.com/cloudbox/cloudbox                    #
+# --                                                                     #
+#         Part of the Cloudbox project: https://cloudbox.works           #
+##########################################################################
+#                   GNU General Public License v3.0                      #
+##########################################################################
+---
+################################
+# Basics
+################################
+
+soulseek_name: soulseek
+
+################################
+# Paths
+################################
+
+soulseek_paths_folder: "{{ soulseek_name }}"
+soulseek_paths_location: "{{ server_appdata_path }}/{{ soulseek_paths_folder }}"
+soulseek_paths_appdata_location: "{{ soulseek_paths_location }}/appdata"
+soulseek_paths_logs_location: "{{ soulseek_paths_location }}/logs"
+soulseek_paths_downloads_location: "{{ downloads.torrents }}/{{ soulseek_paths_folder }}"
+soulseek_paths_folders_list:
+  - "{{ soulseek_paths_location }}"
+  - "{{ soulseek_paths_appdata_location }}"
+  - "{{ soulseek_paths_logs_location }}"
+  - "{{ soulseek_paths_downloads_location }}"
+
+################################
+# Web
+################################
+
+soulseek_web_subdomain: "{{ soulseek_name }}"
+soulseek_web_domain: "{{ user.domain }}"
+soulseek_web_port: "6080"
+soulseek_web_url: "{{ 'https://' + soulseek_web_subdomain + '.' + soulseek_web_domain
+                        if (reverse_proxy_is_enabled)
+                        else 'http://localhost:' + soulseek_web_port }}"
+
+################################
+# Docker
+################################
+
+# Container
+soulseek_docker_container: "{{ soulseek_name }}"
+
+# Image
+soulseek_docker_image_pull: yes
+soulseek_docker_image_tag: "latest"
+soulseek_docker_image: "realies/soulseek:{{ soulseek_docker_image_tag }}"
+
+# Ports
+soulseek_docker_ports_defaults:
+  - "{{ soulseek_web_port }}:{{ soulseek_web_port }}"
+soulseek_docker_ports_custom: []
+soulseek_docker_ports: "{{ soulseek_docker_ports_defaults
+                                + soulseek_docker_ports_custom
+                            if (not reverse_proxy_is_enabled)
+                            else [] + soulseek_docker_ports_custom }}"
+
+# Envs
+soulseek_docker_envs_default:
+  puid: "{{ uid }}"
+  pgid: "{{ gid }}"
+  TZ: "{{ tz }}"
+soulseek_docker_envs_custom: {}
+soulseek_docker_envs_reverse_proxy: {}
+soulseek_docker_envs: "{{ soulseek_docker_envs_default
+                                | combine(soulseek_docker_envs_custom)
+                                | combine(soulseek_docker_envs_reverse_proxy)
+                                | combine(docker_envs_reverse_proxy_common)
+                            if (reverse_proxy_is_enabled)
+                            else soulseek_docker_envs_default
+                                | combine(soulseek_docker_envs_custom) }}"
+
+# Volumes
+soulseek_docker_volumes_default:
+  - "{{ soulseek_paths_appdata_location }}:/data/.SoulseekQt"
+  - "{{ soulseek_paths_logs_location }}:/data/Soulseek Chat Logs"
+  - "{{ soulseek_paths_downloads_location }}:/data/Soulseek Downloads"
+  - "/mnt:/mnt"
+soulseek_docker_volumes_custom: []
+soulseek_docker_volumes: "{{ soulseek_docker_volumes_default
+                                  + soulseek_docker_volumes_custom
+                                  + docker_volumes_downloads_common }}"
+
+# Devices
+soulseek_docker_devices_default: []
+soulseek_docker_devices_custom: []
+soulseek_docker_devices: "{{ soulseek_docker_devices_default
+                                  + soulseek_docker_devices_custom }}"
+
+# Hosts
+soulseek_docker_hosts_default: []
+soulseek_docker_hosts_custom: []
+soulseek_docker_hosts: "{{ docker_hosts_common
+                                | combine(soulseek_docker_hosts_default)
+                                | combine(soulseek_docker_hosts_custom) }}"
+
+# Labels
+soulseek_docker_labels_default: {}
+soulseek_docker_labels_custom: {}
+soulseek_docker_labels: "{{ docker_labels_common
+                                  | combine(soulseek_docker_labels_default)
+                                  | combine(soulseek_docker_labels_custom) }}"
+
+# Hostname
+soulseek_docker_hostname: "{{ soulseek_name }}"
+
+# Networks
+soulseek_docker_networks_alias: "{{ soulseek_name }}"
+soulseek_docker_networks_default: []
+soulseek_docker_networks_custom: []
+soulseek_docker_networks: "{{ docker_networks_common
+                                    + soulseek_docker_networks_default
+                                    + soulseek_docker_networks_custom }}"
+
+# Capabilities
+soulseek_docker_capabilities_default: []
+soulseek_docker_capabilities_custom: []
+soulseek_docker_capabilities: "{{ soulseek_docker_capabilities_default
+                                        + soulseek_docker_capabilities_custom }}"
+
+# Security Opts
+soulseek_docker_security_opts_default: []
+soulseek_docker_security_opts_custom: []
+soulseek_docker_security_opts: "{{ soulseek_docker_security_opts_default
+                                        + soulseek_docker_security_opts_custom }}"
+
+# Restart Policy
+soulseek_docker_restart_policy: unless-stopped
+
+# State
+soulseek_docker_state: started
