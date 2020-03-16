@@ -54,12 +54,12 @@ soulseek_docker_image: "realies/soulseek:{{ soulseek_docker_image_tag }}"
 
 # Ports
 soulseek_docker_ports_defaults:
-  - "{{ soulseek_web_port }}:{{ soulseek_web_port }}"
+  - "{{ soulseek_web_port }}"
 soulseek_docker_ports_custom: []
 soulseek_docker_ports: "{{ soulseek_docker_ports_defaults
-                                + soulseek_docker_ports_custom
-                            if (not reverse_proxy_is_enabled)
-                            else [] + soulseek_docker_ports_custom }}"
+                              + soulseek_docker_ports_custom
+                          if (not reverse_proxy_is_enabled)
+                          else [] + soulseek_docker_ports_custom }}"
 
 # Envs
 soulseek_docker_envs_default:
