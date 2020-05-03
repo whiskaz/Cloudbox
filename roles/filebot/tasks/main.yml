@@ -30,7 +30,9 @@
   file: "path={{item}} state=directory mode=0775 owner={{user}} group={{user}} recurse=yes"
   with_items:
     - /opt/filebot
-
+    - /opt/filebot/test
+  tags: ['bbua']
+  
 - name: Download filebot (patched)
   get_url:
     url: https://bitbucket.org/whiskaz/filebot_patched/get/v4.9.2.tar.gz
@@ -44,7 +46,7 @@
   unarchive:
     src: /opt/filebot/filebot.tar.gz
     dest: /opt/filebot/test
-  tags: ['bbdl']
+  tags: ['bbua']
 # - name: Clone filebot (custom build)
 #   git:
 #     repo: https://{{ bitbucket.user | urlencode }}:{{ bitbucket.pass | urlencode }}@bitbucket.org/whiskaz/filebot_patched/
