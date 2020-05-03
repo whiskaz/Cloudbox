@@ -27,12 +27,12 @@
   when: filebot_monitor_service.stat.exists
 
 - name: Create filebot directories
-  file: "path={{item}} state=directory mode=0775 owner={{user}} group={{user}} recurse=yes"
+  file: "path={{item}} state=directory mode=0775 owner={{ user.name }} group={{ user.name }} recurse=yes"  
   with_items:
     - /opt/filebot
     - /opt/filebot/test
   tags: ['bbua']
-  
+
 - name: Download filebot (patched)
   get_url:
     url: https://bitbucket.org/whiskaz/filebot_patched/get/v4.9.2.tar.gz
@@ -60,8 +60,8 @@
   copy:
     src: "filebot.sh"
     dest: "/opt/filebot/bin/filebot.sh"
-    owner: "{{user}}"
-    group: "{{user}}"
+    owner: "{{user.name}}"
+    group: "{{user.name}}"
     mode: 0775
     force: yes
 
@@ -69,8 +69,8 @@
   copy:
     src: "monitor.sh"
     dest: "/opt/filebot/bin/monitor.sh"
-    owner: "{{user}}"
-    group: "{{user}}"
+    owner: "{{user.name}}"
+    group: "{{user.name}}"
     mode: 0775
     force: yes
 
@@ -93,8 +93,8 @@
   template:
     src: monitor.cfg.js2
     dest: /opt/filebot/bin/monitor.cfg
-    owner: "{{user}}"
-    group: "{{user}}"
+    owner: "{{user.name}}"
+    group: "{{user.name}}"
     mode: 0775
     force: yes
   when: not filebot_monitor_config.stat.exists
@@ -102,28 +102,28 @@
 - name: Set monitor.sh as executable
   file:
     path: /opt/filebot/bin/monitor.sh
-    owner: "{{user}}"
-    group: "{{user}}"
+    owner: "{{user.name}}"
+    group: "{{user.name}}"
     mode: a+x
 
 - name: Set filebot.sh as executable
   file:
     path: /opt/filebot/bin/filebot.sh
-    owner: "{{user}}"
-    group: "{{user}}"
+    owner: "{{user.name}}"
+    group: "{{user.name}}"
     mode: a+x
 
 - name: Set jre/bin as executable
   file:
     path: /opt/filebot/jre/bin
-    owner: "{{user}}"
-    group: "{{user}}"
+    owner: "{{user.name}}"
+    group: "{{user.name}}"
     mode: 0755
     state: directory
     recurse: yes
 
 - name: Set directory permissions
-  file: "path=/opt/filebot state=directory owner={{user}} group={{user}} recurse=yes"
+  file: "path=/opt/filebot state=directory owner={{user.name}} group={{user.name}} recurse=yes"
 
 - name: "Create /usr/local/bin symlink"
   file:
