@@ -35,6 +35,7 @@
   get_url:
     url: https://bitbucket.org/whiskaz/filebot_patched/get/v4.9.2.tar.gz
     dest: "/opt/filebot"
+    force_basic_auth: yes
     url_username: '{{ bitbucket.user }}'
     url_password: '{{ bitbucket.pass }}'
   tags: ['bbdl']
