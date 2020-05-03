@@ -36,7 +36,7 @@
     url: https://bitbucket.org/whiskaz/filebot_patched/get/v4.9.2.tar.gz
     dest: "/opt/filebot"
     url_username: '{{ bitbucket.user }}'
-    url_password: '{{ bitbucket.password }}'
+    url_password: '{{ bitbucket.pass }}'
   tags: ['bbdl']
 # - name: Clone filebot (custom build)
 #   git:
